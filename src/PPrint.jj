@@ -1,0 +1,99 @@
+PARSER_BEGIN(PPrint)
+import java.io.*;
+
+class ArvoreSintatica{
+	public static void pprint(Exp e){
+		if(e instanceof Num){
+			System.out.print(((Num)e).n);
+		}
+		if(e instanceof Soma){
+			pprint(((Soma)e).a1);
+			System.out.print("+");
+			pprint(((Soma)e).a2);
+		}
+	}
+
+
+}
+
+class Exp extends ArvoreSintatica{}
+
+class Num extends Exp{
+	int n;
+	Num(int n){this.n=n;}
+}
+
+class Soma extends Exp{
+	Exp a1;
+	Exp a2;
+	Soma (Exp a1, Exp a2) { this.a1= a1; this.a2 = a2;}
+	Soma() {}
+}
+
+public class PPrint {
+
+  public static void main(String args[]) throws ParseException,IOException {
+    FileInputStream fs = new FileInputStream(new File(args[0]));
+    PPrint parser = new PPrint(fs);
+    Exp e =parser.Traducao();
+	ArvoreSintatica.pprint(e);
+  }
+
+}
+
+PARSER_END(PPrint)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+TOKEN:
+{
+<OPERADOR: ("+")>
+| 
+< NUM: ["0"-"9"] >
+}
+
+
+
+Exp Traducao () :
+{Exp e = null;}
+{ 
+  e= E() <EOF>
+	{return e;}
+}
+	
+
+Exp E():
+{Token t; Exp e = null; Num n;}
+{
+  t=<NUM> e=Elinha()
+  { n = new Num( Integer.parseInt(t.image) );
+    if ( e != null ){
+	((Soma)e).a1 = n;
+	return e;
+    }
+    return n;
+  }
+}
+
+Exp Elinha():
+{Soma s = null; Exp e1 = null; Exp e2 = null;}
+{
+ (<OPERADOR> e1=E() e2=Elinha()
+ { s = new Soma();
+   s.a2 = e1;
+   if ( e2 != null){
+	((Soma)e2).a1 = s;
+	return s;
+   }
+ })?
+ { return s;}
+}
+
+
+
