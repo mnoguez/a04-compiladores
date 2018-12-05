@@ -1,12 +1,10 @@
 PARSER_BEGIN(Karloff)
 import java.io.*;
 
-class ArvoreKarloff{}
-
 public class Karloff {
 
   public static void main(String args[]) throws ParseException,IOException {
-    
+
     Karloff parser = new Karloff(new FileInputStream(args[0]));
     parser.Karloff();
 
@@ -18,6 +16,48 @@ public class Karloff {
   public void pprint(ArvoreKarloff arvore){
 
   }
+}
+
+class ArvoreKarloff{}
+
+class Klf extends ArvoreKarloff{
+    Main main;
+    Func func;
+
+    Klf(Main main, Func func){
+        this.main = main;
+        this.func = func;
+    }
+}
+
+class Main extends ArvoreKarloff{
+    String vd;
+    String main;
+    String aChaves;
+    VarDecl varDecl;
+    SeqComandos seqComandos;
+    String fChaves;
+
+    Main(String vd, String main, String aChaves, VarDecl varDecl, SeqComandos seqComandos, String fChaves){
+        this.vd = vd;
+        this.main = main;
+        this.aChaves = aChaves;
+        this.varDecl = varDecl;
+        this.seqComandos = seqComandos;
+        this.fChaves = fChaves;
+    }
+}
+
+class VarDecl extends ArvoreKarloff{
+
+}
+
+class SeqComandos extends ArvoreKarloff{
+
+}
+
+class Func extends ArvoreKarloff{
+
 }
 
 PARSER_END(Karloff)
