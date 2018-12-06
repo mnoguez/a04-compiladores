@@ -300,37 +300,40 @@ TOKEN :
 
 
 
-void Karloff ():
-{}
+ArvoreKarloff Karloff ():
+{Main main; ArrayList<Func> funcs;}
 {
-    Main() (Func())? <EOF>
+    main = Main() (Func())? <EOF>
+
+    {return new ArvoreKarloff(main, funcs);}
 }
 
 
-void Main ():
-{}
+Main Main ():
+{ArrayList<Decl> varDecl; ArrayList<Comando> seqComandos;}
 {
-    <VOID> <MAIN> <ACHAVES> VarDecl() SeqComandos() <FCHAVES>
+    <VOID> <MAIN> <ACHAVES> varDecl = VarDecl() seqComandos = SeqComandos() <FCHAVES>
+
+    {return new Main(varDecl, seqComandos);}
 }
 
-
-void VarDecl ():
-{}
+ArrayList<Decl> VarDecl ():
+{ArrayList<Decl> varDecl;}
 {
-    VarDecl1()
+    varDecl = VarDecl1()
 }
 
-void VarDecl1 ():
-{}
+ArrayList<Decl> VarDecl1 ():
+{ArrayList<Decl> varDecl;}
 {
     (<NVAR> Tipo() <ID> <PV> VarDecl1())?
 }
 
-void Tipo ():
-{}
+Tipo Tipo ():
+{Token t1, t2; Bool b; Int n;}
 {
-    <INT>
-    | <BOOL>
+    t1 = <INT>
+    | t2 = <BOOL>
 }
 
 void SeqComandos ():
