@@ -403,9 +403,13 @@ ArrayList<Func> Func ():
 }
 
 ArrayList<Arg> ListaArg ():
-{ArrayList<Arg> args = new ArrayList<Arg>(); Tipo tipo1; Tipo tipo2; Token id1; Token id2;}
+{ArrayList<Arg> args = new ArrayList<Arg>(); Tipo tipo1 = null; Tipo tipo2 = null; Token id1 = null; Token id2 = null;}
 {
-    tipo1 = Tipo() id1 = <ID> (<VIRGULA> tipo2 = Tipo() id2 = <ID>)*
+    tipo1 = Tipo() id1 = <ID> {args.add(new Arg(tipo1, id1.image));} (<VIRGULA> tipo2 = Tipo() id2 = <ID>
+    {
+        if(tipo != null && id != null)
+            args.add(new Arg(tipo2, id2.image));
+    })*
 
     {return args;}
 }
