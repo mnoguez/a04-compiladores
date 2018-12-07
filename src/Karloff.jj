@@ -301,9 +301,9 @@ TOKEN :
 
 
 ArvoreKarloff Karloff ():
-{Main main; ArrayList<Func> funcs;}
+{Main main; ArrayList<Func> funcs = null;}
 {
-    main = Main() (Func())? <EOF>
+    main = Main() (funcs = Func())? <EOF>
 
     {return new ArvoreKarloff(main, funcs);}
 }
@@ -318,105 +318,94 @@ Main Main ():
 }
 
 ArrayList<Decl> VarDecl ():
-{ArrayList<Decl> varDecl;}
+{ArrayList<Decl> varDecl = new ArrayList<Decl>(); Token id = null; Tipo tipo = null;}
 {
-    varDecl = VarDecl1()
-}
-
-ArrayList<Decl> VarDecl1 ():
-{ArrayList<Decl> varDecl;}
-{
-    (<NVAR> Tipo() <ID> <PV> VarDecl1())?
+    (<NVAR> tipo = Tipo() id = <ID> <PV> {varDecl.add(new  Decl(tipo, id.image));})*
 }
 
 Tipo Tipo ():
-{Token t1, t2; Bool b; Int n;}
+{Token t1 = null; Token t2 = null; Bool b; Int n; Tipo t = null;}
 {
-    t1 = <INT>
-    | t2 = <BOOL>
+    t1 = <INT> {t = new Int(t1.image);}
+    | t2 = <BOOL> {t = new Bool(t2.image);}
+
+    {return t;}
 }
 
-void SeqComandos ():
-{}
+ArrayList<Comando> SeqComandos ():
+{ArrayList<Comando> comandos = new Comando(); Comando c = null;}
 {
-    SeqComandos1()
+    (c = Comando() {comandos.add(c);})*
+
+    {return comandos;}
 }
 
-void SeqComandos1 ():
-{}
+Comando Comando ():
+{Comando comando = null; Token id = null; Exp exp = null; ArrayList<Comando> comandos; ArrayList<Exp> listaExp;}
 {
-    (Comando() SeqComandos1())?
+    id = <ID> (<IGUAL> exp = Exp() <PV> {listaExp.add(exp);} | <APAR> (listaExp = ListaExp())? <FPAR> <PV>) {comando = new Atrib(id.image, listaExp);}
+    | <IF> <APAR> exp = Exp() <FPAR> <THEN> <ACHAVES> comandos = SeqComandos() <FCHAVES> <PV> {comando = new If(exp, comandos);}
+    | <WHILE> <APAR> exp = Exp() <FPAR> <ACHAVES> comandos = SeqComandos() <FCHAVES> <PV> {comando = new While(exp, comandos);}
+    | <REPEAT> <ACHAVES> comandos = SeqComandos() <FCHAVES> <UNTIL> <APAR> exp = Exp() <FPAR> <PV> {comando = new Repeat(exp, comandos);}
+    | <RETURN> exp = Exp() <PV> {comando = new Return(exp);}
+    | <SOUT> <APAR> exp = Exp() <FPAR> <PV> {comando = new Sout(exp);}
+
+    {return comando;}
 }
 
-void Comando ():
-{}
+Exp Exp ():
+{Exp a = null, b = null, exp = null; Fator f = null;}
 {
-    <ID> Comando1()
-    | <IF> <APAR> Exp() <FPAR> <THEN> <ACHAVES> SeqComandos() <FCHAVES> <PV>
-    | <WHILE> <APAR> Exp() <FPAR> <ACHAVES> SeqComandos() <FCHAVES> <PV>
-    | <REPEAT> <ACHAVES> SeqComandos() <FCHAVES> <UNTIL> <APAR> Exp() <FPAR> <PV>
-    | <RETURN> Exp() <PV>
-    | <SOUT> <APAR> Exp() <FPAR> <PV>
+    <APAR> a = Exp() <OP> b = Exp() <FPAR> {exp = new Op(a, b);}
+    | f = Fator() {exp = f;}
+
+    {return exp;}
 }
 
-void Comando1 ():
-{}
+Fator Fator ():
+{Token t = null; ArrayList<Exp> exps = new Exp(); Fator f = null;}
 {
-    <IGUAL> Exp() <PV>
-    | <APAR> (ListaExp())? <FPAR> <PV>
+    t = <ID> (<APAR> (exps = ListaExp())? <FPAR>)?
+    {
+        if(exps.isEmpty())
+            f = new Id(t.image);
+        else
+            f = new FuncFator(t.image);
+    }
+    | t = <NUM> {f = new Num(t.image);}
+    | t = <TRUE> {f = new True(t.image);}
+    | t = <FALSE> {f = new False(t.image);}
+
+    {return f;}
 }
 
-void Exp ():
-{}
+ArrayList<Exp> ListaExp ():
+{ArrayList<Exp> exps = new ArrayList<Exp>(); Exp exp1 = null, exp2 = null;}
 {
-    <APAR> Exp() <OP> Exp() <FPAR>
-    | Fator()
+    exp1 = Exp() (<VIRGULA> exp2 = Exp())*
+    {
+        exps.add(exp1);
+
+        if(exp2 != null)
+            exps.add(exp2);
+    }
+
+    {return exps;}
 }
 
-void Fator ():
-{}
+ArrayList<Func> Func ():
+{ArrayList<Func> funcs = new Func(); Tipo t = null; Token id = null; ArrayList<Arg> args; ArrayList<Decl> decls; ArrayList<Comando> comandos;}
 {
-    <ID> Fator1()
-    | <NUM>
-    | <TRUE>
-    | <FALSE>
+    (<FUNC> t = Tipo() id = <ID> <APAR> (args = ListaArg())* <FPAR> <ACHAVES> decls = VarDecl() comandos = SeqComandos() <FCHAVES>
+    {funcs.add(new Func(t, id.image, args, decls, comandos));})+
+
+    {return funcs;}
 }
 
-void Fator1 ():
-{}
+ArrayList<Arg> ListaArg ():
+{ArrayList<Arg> args = new ArrayList<Arg>(); Tipo tipo1; Tipo tipo2; Token id1; Token id2;}
 {
-    (<APAR> (ListaExp())? <FPAR>)?
+    tipo1 = Tipo() id1 = <ID> (<VIRGULA> tipo2 = Tipo() id2 = <ID>)*
+
+    {return args;}
 }
-
-void ListaExp ():
-{}
-{
-    Exp() ListaExp1()
-}
-
-void ListaExp1 ():
-{}
-{
-    (<VIRGULA> Exp() ListaExp1())?
-}
-
-void Func ():
-{}
-{
-    (<FUNC> Tipo() <ID> <APAR> (ListaArg())? <FPAR> <ACHAVES> VarDecl() SeqComandos() <FCHAVES>)+
-}
-
-void ListaArg ():
-{}
-{
-    Tipo() <ID> ListaArg1()
-}
-
-void ListaArg1 ():
-{}
-{
-    (<VIRGULA> Tipo() <ID> ListaArg1())?
-}
-
-
-
