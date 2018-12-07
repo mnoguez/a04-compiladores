@@ -35,17 +35,17 @@ class Decl{
 class Tipo{}
 
 class Int extends Tipo{
-    int n;
+    String n;
 
-    Int(int n){
+    Int(String n){
         this.n = n;
     }
 }
 
 class Bool extends Tipo{
-    boolean bool;
+    String bool;
 
-    Bool(boolean bool){
+    Bool(String bool){
         this.bool = bool;
     }
 }
@@ -54,9 +54,9 @@ class Comando{}
 
 class Atrib extends Comando{
     String var;
-    Exp exp;
+    ArrayList<Exp> exp;
 
-    Atrib(String var, Exp exp){
+    Atrib(String var, ArrayList<Exp> exp){
         this.var = var;
         this.exp = exp;
     }
@@ -120,95 +120,111 @@ class Sout extends Comando{
 
 class Exp{}
 
-class Op extends Exp{}
-
-class Soma extends Op{
+class Op extends Exp{
     Exp a;
     Exp b;
 
-    Soma(Exp a, Exp b){
+    Op(Exp a, Exp b){
         this.a = a;
         this.b = b;
+    }
+}
+
+class Fator extends Exp{}
+
+class Id extends Fator{
+    String var;
+
+    Id(String var){
+        this.var = var;
+    }
+}
+
+class FuncFator extends Fator{
+    String var;
+    ArrayList<Exp> exps;
+
+    FuncFator(String var, ArrayList<Exp> exps){
+        this.var = var;
+        this.exps = exps;
+    }
+}
+
+class Num extends Fator{
+    String num;
+
+    Num(String num){
+        this.num = num;
+    }
+}
+
+class True extends Fator{
+    String t;
+
+    True(String t){
+        this.t = t;
+    }
+}
+
+class False extends Fator{
+    String f;
+
+    False(String f){
+        this.f = f;
+    }
+}
+
+class Soma extends Op{
+    Soma(Exp a, Exp b){
+        super(a, b);
     }
 }
 
 class Sub extends Op{
-    Exp a;
-    Exp b;
-
     Sub(Exp a, Exp b){
-        this.a = a;
-        this.b = b;
+        super(a, b);
     }
 }
 
 class Mult extends Op{
-    Exp a;
-    Exp b;
-
     Mult(Exp a, Exp b){
-        this.a = a;
-        this.b = b;
+        super(a, b);
     }
 }
 
 class Div extends Op{
-    Exp a;
-    Exp b;
-
     Div(Exp a, Exp b){
-        this.a = a;
-        this.b = b;
+        super(a, b);
     }
 }
 
 class And extends Op{
-    Exp a;
-    Exp b;
-
     And(Exp a, Exp b){
-        this.a = a;
-        this.b = b;
+        super(a, b);
     }
 }
 
 class Or extends Op{
-    Exp a;
-    Exp b;
-
     Or(Exp a, Exp b){
-        this.a = a;
-        this.b = b;
+        super(a, b);
     }
 }
 
 class Maior extends Op{
-    Exp a;
-    Exp b;
-
     Maior(Exp a, Exp b){
-        this.a = a;
-        this.b = b;
+        super(a, b);
     }
 }
 
 class Menor extends Op{
-    Exp a;
-    Exp b;
-
     Menor(Exp a, Exp b){
-        this.a = a;
-        this.b = b;
+        super(a, b);
     }
 }
 
 class Igual extends Op{
-    Exp a;
-    Exp b;
-
     Igual(Exp a, Exp b){
-        this.a = a;
-        this.b = b;
+        super(a, b);
     }
 }
 
