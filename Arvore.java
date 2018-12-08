@@ -120,10 +120,12 @@ class Exp{}
 
 class Op extends Exp{
     Exp a;
+    String op;
     Exp b;
 
-    Op(Exp a, Exp b){
+    Op(Exp a, String op, Exp b){
         this.a = a;
+        this.op = op;
         this.b = b;
     }
 }

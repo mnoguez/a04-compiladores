@@ -1,0 +1,22 @@
+void main {
+    newVar bool flag;
+    newVar int n_1n;
+
+    n_1n = (( 3 - 2 ) + 1);
+
+    if ( true ) then {
+        n_1n = (( 3 - 2 ) + 1);
+    };
+
+    System.output(3);
+}
+
+func bool teste (bool flag) {}
+
+func int outro_teste (int n_1n) {
+    newVar int a;
+
+    a = 3;
+
+    return a;
+}
