@@ -210,7 +210,6 @@ public class Karloff {
     //parser.Karloff();
 
     ArvoreKarloff arvore = parser.Karloff();
-
     pprint(arvore);
   }
 
@@ -223,7 +222,7 @@ public class Karloff {
     System.out.print("void main {\n");
     pprintVarDecl(main.varDecl);
     pprintSeqComandos(main.seqComandos);
-    System.out.print("}");
+    System.out.print("}\n");
   }
 
   static void pprintVarDecl(ArrayList<Decl> varDecl){
@@ -282,7 +281,7 @@ public class Karloff {
         System.out.print(";\n");
     }else if(comando instanceof Sout){
         System.out.print("System.output(");
-        pprintExp( ((Return) comando).exp);
+        pprintExp( ((Sout) comando).exp);
         System.out.print(");\n");
     }
   }
@@ -346,7 +345,8 @@ public class Karloff {
     for(i = 0; i < args.size(); i++){
         if(i > 0)
             System.out.print(", ");
-        System.out.print((args.get(i)).tipo + (args.get(i)).var);
+        pprintTipo(args.get(i).tipo);
+        System.out.print(" " + (args.get(i)).var);
     }
   }
 }
@@ -452,9 +452,10 @@ Comando Comando ():
 }
 
 Exp Exp ():
-{Exp a = null, b = null, exp; Fator f = null; Token op = null;}
+{Exp a = null, b = null, exp; Fator f = null; Token op = null; Op o;}
 {
-    (<APAR> a = Exp() token = <OP> b = Exp() <FPAR> {exp = new Op(a, op.image, b);}
+
+    (<APAR> a = Exp() op = <OP> b = Exp() <FPAR> {o = new Op(a, op.image, b); exp = o;}
     | f = Fator() {exp = f;})
 
     {return exp;}
@@ -463,6 +464,7 @@ Exp Exp ():
 Fator Fator ():
 {Token t = null; ArrayList<Exp> exps = new ArrayList<Exp>(); Fator f = null;}
 {
+
     (t = <ID> (<APAR> (exps = ListaExp())? <FPAR>)?
     {
         if(exps.isEmpty())

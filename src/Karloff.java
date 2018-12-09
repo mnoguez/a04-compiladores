@@ -210,7 +210,6 @@ public class Karloff implements KarloffConstants {
     //parser.Karloff();
 
     ArvoreKarloff arvore = parser.Karloff();
-
     pprint(arvore);
   }
 
@@ -223,7 +222,7 @@ public class Karloff implements KarloffConstants {
     System.out.print("void main {\u005cn");
     pprintVarDecl(main.varDecl);
     pprintSeqComandos(main.seqComandos);
-    System.out.print("}");
+    System.out.print("}\u005cn");
   }
 
   static void pprintVarDecl(ArrayList<Decl> varDecl){
@@ -282,7 +281,7 @@ public class Karloff implements KarloffConstants {
         System.out.print(";\u005cn");
     }else if(comando instanceof Sout){
         System.out.print("System.output(");
-        pprintExp( ((Return) comando).exp);
+        pprintExp( ((Sout) comando).exp);
         System.out.print(");\u005cn");
     }
   }
@@ -346,7 +345,8 @@ public class Karloff implements KarloffConstants {
     for(i = 0; i < args.size(); i++){
         if(i > 0)
             System.out.print(", ");
-        System.out.print((args.get(i)).tipo + (args.get(i)).var);
+        pprintTipo(args.get(i).tipo);
+        System.out.print(" " + (args.get(i)).var);
     }
   }
 
@@ -539,15 +539,15 @@ public class Karloff implements KarloffConstants {
   }
 
   static final public Exp Exp() throws ParseException {
- Exp a = null, b = null, exp; Fator f = null; Token op = null;
+ Exp a = null, b = null, exp; Fator f = null; Token op = null; Op o;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case APAR:
       jj_consume_token(APAR);
       a = Exp();
-      token = jj_consume_token(OP);
+      op = jj_consume_token(OP);
       b = Exp();
       jj_consume_token(FPAR);
-                                                     exp = new Op(a, op.image, b);
+                                                  o = new Op(a, op.image, b); exp = o;
       break;
     case TRUE:
     case FALSE:
